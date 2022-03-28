@@ -1,17 +1,31 @@
 let video = document.getElementById("video");
 let container = document.getElementById("container");
+let video_files;
+
+document.getElementById("videos").addEventListener("change", function() {
+    video_files = Array.from(this.files);
+});
 
 function player(code) {
     document.getElementById("init").hidden = true;
     let next = document.createElement("video");
     next.className = "video";
-    next.src = code + ".mp4";
+    let file = video_files.find(file => file.name.search(code) != -1);
+    next.src = URL.createObjectURL(file);
     next.hidden = true;
     container.appendChild(next);
+    if (code == "default") {
+        next.loop = true;
+    } else {
+        next.addEventListener("ended", function() {
+            player("default");
+        });
+    }
     next.addEventListener("canplay", function() {
         next.play();
         next.hidden = false;
         container.removeChild(video);
+        next.removeEventListener("canplay", arguments.callee);
         video = next;
     });
 }

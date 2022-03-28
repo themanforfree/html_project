@@ -17,10 +17,18 @@
     <div id="init">
         <div class="options">
             <div class="row level">
-                <div class="col-xs-3 level-item">
+                <div class="col-xs-5 level-item">
+                    <p class="m-0 font-extrabold">Videos Directory:</p>
+                </div>
+                <div class="col-xs-7 level-item">
+                    <input type="file" id="videos" webkitdirectory directory>
+                </div>
+            </div>
+            <div class="row level">
+                <div class="col-xs-5 level-item">
                     <p class="m-0 font-extrabold">Baud rate:</p>
                 </div>
-                <div class="col-xs-9 level-item input-control">
+                <div class="col-xs-7 level-item input-control">
                     <select class="select" id="baudRate">
                         <option value="9600" selected="selected">9600</option>
                         <option value="14400">14400</option>
@@ -37,10 +45,10 @@
             </div>
 
             <div class="row level">
-                <div class="col-xs-3 level-item">
+                <div class="col-xs-5 level-item">
                     <p class="m-0 font-extrabold">Data bits:</p>
                 </div>
-                <div class="col-xs-9 level-item input-control">
+                <div class="col-xs-7 level-item input-control">
                     <select class="select" id="dataBits">
                         <option value="7">7</option>
                         <option value="8" selected="selected">8</option>
@@ -49,10 +57,10 @@
             </div>
 
             <div class="row level">
-                <div class="col-xs-3 level-item">
+                <div class="col-xs-5 level-item">
                     <p class="m-0 font-extrabold">Parity:</p>
                 </div>
-                <div class="col-xs-9 level-item input-control">
+                <div class="col-xs-7 level-item input-control">
                     <select class="select" id="parity">
                         <option value="none" selected="selected">None</option>
                         <option value="even">Even</option>
@@ -62,10 +70,10 @@
             </div>
 
             <div class="row level">
-                <div class="col-xs-3 level-item">
+                <div class="col-xs-5 level-item">
                     <p class="m-0 font-extrabold">Stop bits:</p>
                 </div>
-                <div class="col-xs-9 level-item input-control">
+                <div class="col-xs-7 level-item input-control">
                     <select class="select" id="stopBits">
                         <option value="1" selected="selected">1</option>
                         <option value="2">2</option>
