@@ -1,60 +1,77 @@
-let video = document.getElementById("video");
-let container = document.getElementById("container");
+let container = document.getElementById('container');
 let video_files;
+let video;
 
-document.getElementById("videos").addEventListener("change", function() {
+document.getElementById('videos').addEventListener('change', function () {
     video_files = Array.from(this.files);
 });
 
-function player(code) {
-    document.getElementById("init").hidden = true;
-    let next = document.createElement("video");
-    next.className = "video";
-    let file = video_files.find(file => file.name.search(code) != -1);
-    next.src = URL.createObjectURL(file);
-    next.hidden = true;
-    container.appendChild(next);
-    if (code == "default") {
-        next.loop = true;
-    } else {
-        next.addEventListener("ended", function() {
-            player("default");
-        });
+function all_stop() {
+    for (node in container.childNodes) {
+        if (container.childNodes[node].tagName == 'VIDEO') {
+            container.childNodes[node].pause();
+            container.childNodes[node].hidden = true;
+        }
     }
-    next.addEventListener("canplay", function() {
-        next.play();
-        next.hidden = false;
-        container.removeChild(video);
-        next.removeEventListener("canplay", arguments.callee);
-        video = next;
+}
+
+function player(code) {
+    if (!document.getElementById(code)) {
+        console.log("Can't find video with code: " + code);
+        return;
+    }
+    video = document.getElementById(code);
+    video.currentTime = 0;
+    video.addEventListener('canplay', function () {
+        all_stop();
+        video.play();
+        video.hidden = false;
+        console.log('Playing video with code: ' + code);
+        video.removeEventListener('canplay', arguments.callee);
     });
 }
 
-document.getElementById("start").addEventListener("click", async function() {
+document.getElementById('start').addEventListener('click', async function () {
     const port = await navigator.serial.requestPort();
-    player("default");
+
+    for (index in video_files) {
+        let new_video = document.createElement('video');
+        new_video.className = 'video';
+        new_video.src = URL.createObjectURL(video_files[index]);
+        new_video.id = video_files[index].name.split('.')[0];
+        new_video.hidden = true;
+        new_video.volume = 1;
+        if (new_video.id == 'default') {
+            new_video.loop = true;
+        } else {
+            new_video.addEventListener('ended', function () {
+                player('default');
+            });
+        }
+
+        container.appendChild(new_video);
+    }
+    document.getElementById('init').hidden = true;
+    player('default');
     await port.open({
-        baudRate: document.getElementById("baudRate").value,
-        dataBits: document.getElementById("dataBits").value,
-        parityBit: document.getElementById("parity").value,
-        stopBits: document.getElementById("stopBits").value,
+        baudRate: document.getElementById('baudRate').value,
+        dataBits: document.getElementById('dataBits').value,
+        parityBit: document.getElementById('parity').value,
+        stopBits: document.getElementById('stopBits').value,
     });
-    const textDecoder = new TextDecoderStream("gb2312");
+    const textDecoder = new TextDecoderStream('gb2312');
     const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
     const reader = textDecoder.readable.getReader();
     while (port.readable) {
         try {
             while (true) {
-                const {
-                    value,
-                    done
-                } = await reader.read();
+                const { value, done } = await reader.read();
                 if (done) {
                     reader.releaseLock();
                     break;
                 }
                 if (value) {
-                    console.log(value);
+                    console.log('Received: ' + value);
                     player(value);
                     player(value);
                 }
@@ -64,10 +81,10 @@ document.getElementById("start").addEventListener("click", async function() {
         }
     }
     await port.close();
-    console.log("port closed");
+    console.log('port closed');
 });
 
-document.addEventListener("dblclick", function() {
+document.addEventListener('dblclick', function () {
     if (!document.fullscreenElement) {
         document.documentElement.requestFullscreen();
     } else {
@@ -75,8 +92,7 @@ document.addEventListener("dblclick", function() {
     }
 });
 
-
-document.addEventListener("keydown", function(e) {
+document.addEventListener('keydown', function (e) {
     // space
     if (e.keyCode == 32) {
         if (!video.hidden) {
@@ -98,21 +114,20 @@ document.addEventListener("keydown", function(e) {
     }
     // key up
     if (e.keyCode == 38) {
-        video.volume += 0.1;
+        if (video.volume + 0.1 <= 1) {
+            video.volume += 0.1;
+        }
     }
     // key down
     if (e.keyCode == 40) {
-        video.volume -= 0.1;
+        if (video.volume - 0.1 >= 0) {
+            video.volume -= 0.1;
+        }
     }
 
     // key num
     if (e.keyCode >= 49 && e.keyCode <= 57) {
+        console.log('Press key: ' + (e.keyCode - 48));
         player(e.keyCode - 48);
-    }
-
-    // key 0
-    if (e.keyCode == 48) {
-        video.hidden = true;
-        init.hidden = false;
     }
 });
