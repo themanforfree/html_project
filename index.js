@@ -45,12 +45,16 @@ document.getElementById('start').addEventListener('click', async function () {
             new_video.loop = true;
         } else {
             new_video.addEventListener('ended', function () {
-                player('default');
+                all_stop();
+                setTimeout(() => {
+                    player('default');
+                }, 1000);
             });
         }
 
         container.appendChild(new_video);
     }
+    container.hidden = false;
     document.getElementById('init').hidden = true;
     player('default');
     await port.open({
