@@ -41,7 +41,7 @@ document.getElementById('start').addEventListener('click', async function () {
         new_video.id = video_files[index].name.split('.')[0];
         new_video.hidden = true;
         new_video.volume = 1;
-        if (new_video.id == 'default') {
+        if (new_video.id == 'default' || new_video.id == '0') {
             new_video.loop = true;
         } else {
             new_video.addEventListener('ended', function () {
@@ -130,7 +130,7 @@ document.addEventListener('keydown', function (e) {
     }
 
     // key num
-    if (e.keyCode >= 49 && e.keyCode <= 57) {
+    if (e.keyCode >= 48 && e.keyCode <= 57) {
         console.log('Press key: ' + (e.keyCode - 48));
         player(e.keyCode - 48);
     }
